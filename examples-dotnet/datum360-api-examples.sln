@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oauth2-2legged", "oauth2-2legged\oauth2-2legged.csproj", "{D7C88072-4D6E-4013-9D0B-A9CCDADD8EAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pim360-export", "pim360-export\pim360-export.csproj", "{DD32281F-DEE6-40E8-8256-220BD9E7B1B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pim360-import", "pim360-import\pim360-import.csproj", "{DE845236-4D2D-49B7-B7A1-3780185AFD72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oauth2-3legged", "oauth2-3legged\oauth2-3legged.csproj", "{14E35EA3-1537-43A0-8D96-A201E014F481}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7C88072-4D6E-4013-9D0B-A9CCDADD8EAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C88072-4D6E-4013-9D0B-A9CCDADD8EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C88072-4D6E-4013-9D0B-A9CCDADD8EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C88072-4D6E-4013-9D0B-A9CCDADD8EAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD32281F-DEE6-40E8-8256-220BD9E7B1B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD32281F-DEE6-40E8-8256-220BD9E7B1B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD32281F-DEE6-40E8-8256-220BD9E7B1B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD32281F-DEE6-40E8-8256-220BD9E7B1B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE845236-4D2D-49B7-B7A1-3780185AFD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE845236-4D2D-49B7-B7A1-3780185AFD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE845236-4D2D-49B7-B7A1-3780185AFD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE845236-4D2D-49B7-B7A1-3780185AFD72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E35EA3-1537-43A0-8D96-A201E014F481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E35EA3-1537-43A0-8D96-A201E014F481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E35EA3-1537-43A0-8D96-A201E014F481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E35EA3-1537-43A0-8D96-A201E014F481}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F95B8C8-BC18-464E-9FF4-84C71E26D1BE}
+	EndGlobalSection
+EndGlobal

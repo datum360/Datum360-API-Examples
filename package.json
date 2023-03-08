@@ -1,0 +1,29 @@
+{
+  "name": "datum360-api",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get your application up and running.",
+  "main": "",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon examples/oauth2-2legged.js"
+  },
+  "author": "Datum360",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/datum360-src/datum360-api#readme",
+  "dependencies": {
+    "@azure/service-bus": "^7.3.0",
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "passport-oauth2": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}

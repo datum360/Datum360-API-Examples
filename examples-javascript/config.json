@@ -1,0 +1,10 @@
+{
+    "ConnectionString": "example-connection-string",
+    "Subscription": "example-subscription",
+    "tokenUrl": "https://example-system.acl360.io/oauth2/token",
+    "authorizeUrl": "https://example-system.acl360.io/oauth2/authorize",
+    "clientId": "username",
+    "clientSecret": "password",
+    "pimScope": "example-system-pim360",
+    "clsScope": "example-system-cls360"
+}
