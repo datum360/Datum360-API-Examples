@@ -8,7 +8,10 @@ You can also navigate to it by clicking on the top right of the screen in the PI
 
 ![](/images/API_documentation.png)
 
-Also on this page by clicking on the green "Authorize" button at the top you will be presented with a dialog showing the information required for both 2-legged and 3-legged OAuth2 authentication. This includes: Authorization URL, Token URL and Scope
+On the documentation page click on the green "Authorize" button at the top right to be presented with a dialog showing the information required for both 2-legged and 3-legged OAuth2 authentication. This includes: Authorization URL, Token URL and Scope
+
+![](/images/API_authorisation.png)
+
 
 ## Code Examples
 
