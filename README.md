@@ -1,6 +1,18 @@
 ![](https://www.datum360.com/assets/img/datum360_email_logo.png)
 
 # Datum360 API
+
+Datum360 APIs allow developers to programmatically use any functionality that is available within the Connected Data Platform (CDP) interface.  This provide a powerful mechanism for creating integrations between applications to support a rich ecosystem landscape.
+
+Exporting data is simple with GET APIs that enable users to export data in a variety of methods as you can within the CDP.   For example accessing saved LiveViews, run a tag to document association report or query individual objects and retrieve their data. 
+
+Importing data is still controlled via an EIC within PIM360. The POST APIs can be used to create EICs, create activities and automate the import of data and associations.   
+
+The data returned from the APIs is in json format. This can then be utilised and manipulated according to a specific use case in a wide variety of infrastructure set ups and coding/integration tools. For example using AWS Lambdas or Azure functions.
+
+
+# Accessing Datum360 API
+
 To get started with the API take a look at the API docs on each system (CLS360, PIM360, DDM360). To access the API docs, log into a system and then navigate to /api-docs e.g
 `https://example-system.cls360.io/api-docs`
 
@@ -8,7 +20,11 @@ It is also accessible by navigating through the menu on the top right of the scr
 
 ![](/images/API_documentation.png)
 
-On the documentation page click on the green "Authorize" button at the top right to be presented with a dialog showing the information required for both 2-legged and 3-legged OAuth2 authentication. This includes: Authorization URL, Token URL and Scope
+On the documentation page click on the green "Authorize" button towards right after the description
+
+![](/images/API_authbutton.png)
+
+A dialog box then pops up showing the information required for both 2-legged and 3-legged OAuth2 authentication. This includes: Authorization URL, Token URL and Scope
 
 ![](/images/API_authorisation.png) 
 
@@ -76,6 +92,7 @@ The request must also have included the bearer token in the request headers.
 
 
 ### PIM360 Export
+
 The provided example shows how to submit an export activity to PIM360 and download the generated file. This is the equivelant of pressing the "export" button on the LiveView page in the UI. It is suitable for occassional expoorts of data, but if continuous querying is required then there are more suitable methods available. The minimum required parameters are:
 
 * liveviewHdl: The handle of the liveview to export
@@ -92,7 +109,7 @@ Submitting the export activity request will return details about the activity th
 Once the activity has successfully finished it will contain the details of the file that has been generated. By retrieving the file handle this can then be submitted to the "get file" endpoint which will return a file stream, note that this request must set the "responseType" as "stream". The downloaded file will be a zip file so will need to be extracted once saved.
 
 ### Receiving Messaging Example
-The messaging code example shows how to check for cls360 messages and then read any available messages. This will need to be updated with the relevant connection string and subscription name used. 
+The messaging code example shows how to check for CLS360 messages and then read any available messages. This will need to be updated with the relevant connection string and subscription name used. 
 
 When a message is received it will have the message properties available within message.applicationProperties. So in the example the handle of a newly created class can be retreived by doing:
 
