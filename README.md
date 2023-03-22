@@ -93,7 +93,7 @@ The request must also have included the bearer token in the request headers.
 
 ### PIM360 Export
 
-The provided example shows how to submit an export activity to PIM360 and download the generated file. This is the equivelant of pressing the "export" button on the LiveView page in the UI. It is suitable for occassional expoorts of data, but if continuous querying is required then there are more suitable methods available. The minimum required parameters are:
+The provided example shows how to submit an export activity to PIM360 and download the generated file. This is the equivelant of pressing the "export" button on the LiveView page in the UI. It is suitable for occassional exports of data, but if continuous querying is required then there are more suitable methods available. The minimum required parameters are:
 
 * liveviewHdl: The handle of the liveview to export
 
@@ -149,36 +149,36 @@ for example:
 * VersionTemplate (ie update)
 
 #### ObjectSubType for classes
-* "Tag Number Format"
-* "Data Source"
-* "Numbering Specification"
-* "Equipment Item"
-* "Output Mapping"
-* "Process"
-* "Document"
-* "Measure Attribute"
-* "UoM Group"
-* "UoM"
-* "Data Target"
-* "Attribute Mapping"
-* "Functional"
-* "Attribute Group"
-* "Tag Code Mapping"
-* "Discipline"
-* "Equipment Model"
-* "Register"
-* "Information Attribute"
+* Tag Number Format
+* Data Source
+* Numbering Specification
+* Equipment Item
+* Output Mapping
+* Process
+* Document
+* Measure Attribute
+* UoM Group
+* UoM
+* Data Target
+* Attribute Mapping
+* Functional
+* Attribute Group
+* Tag Code Mapping
+* Discipline
+* Equipment Model
+* Register
+* Information Attribute
 
 #### ObjectSubType for templates
-* "Associations"
-* "Alias"
-* "Template"
-* "Mapping"
-* "Data"
-* "Metadata"
+* Associations
+* Alias
+* Template
+* Mapping
+* Data
+* Metadata
 
 #### ObjectSubType for domains
-* "domain"
+* domain
 
 
 ### PIM360 Messages
@@ -217,6 +217,7 @@ for example:
 
 #### Attribute Modifications
 Created when an attribute on an object has an action against it
+
 Message format: 
 
 `system.schema.systemName.operation.objectType.objectSubType.eicHdl.srcHdl.facId.clsHdl.objHdl.attrHdl`
@@ -227,6 +228,7 @@ for example:
 
 #### Association Modifications
 Created when an association has an action against it
+
 Message format:
 
 `system.schema.systemName.operation.objectType.eicHdl.fromObjectSubType.fromObjHdl.toObjectSubType.toObjHdl.assocHdl`
@@ -248,6 +250,7 @@ for example:
 
 #### ETL Queue Operations
 Created when the ETL queue is modified
+
 Message format: 
 
 `system.schema.systemName.objectType.activityId.operation.activityHandle.userHandle`
@@ -268,6 +271,7 @@ for example:
 
 #### Document updates
 Created when a document is updated
+
 Message format:
 
 `system.schema.systemName.objectType.operation.doucmentHdl.newCurrentRevisonHdl`
@@ -280,6 +284,7 @@ for example:
 
 #### Create deliverable
 Created when a deliverable is created
+
 Message format:
 
 `system.schema.systemName.objectType.operation.eicHdl.pimDocHdl`
@@ -292,6 +297,7 @@ for example:
 
 ### Deliver file to deliverable
 Created when a file is added to a deliverable
+
 Message format:
 
 `system.schema.systemName.objectType.operation.documentHdl.pimDocHdl.revisionHdl.fileExtension`
