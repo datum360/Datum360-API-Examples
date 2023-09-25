@@ -6,5 +6,7 @@
     "clientId": "username",
     "clientSecret": "password",
     "pimScope": "example-system-pim360",
-    "clsScope": "example-system-cls360"
+    "clsScope": "example-system-cls360",
+    "bim360ClientId": "",
+    "bim360ClientSecret": ""
 }
