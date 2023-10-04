@@ -115,6 +115,11 @@ When a message is received it will have the message properties available within 
 
 `message.applicationProperties.hdl`
 
+### Retrieve DDM360 Drawing/Model Properties
+Within the DDM360 model viewer, we have the "EP" button which downloads a file containing all of the properties for the objects in a model/drawing. The code example `generate-ep-file.js` shows how those attributes can be retrieved and parsed. It requires a BIM360 Client ID and Client Secret, this is not your BIM360 account but a [forge integration](https://forge.autodesk.com/myapps/) that has been authorised as a custom integration against the target BIM360. 
+
+To run the example you will also need the urn of the document, this is returned when submitting a document to BIM360 from DDM360 using the `/forgeupload` API.
+
 ## Messaging
 
 The Datum360 SaaS platform uses AMQP with RabbitMQ as the broker, to produce messages when actions are executed across CLS360, PIM360 and DDM360. These messages can then be received by a client, clients for different languages can be found [here](https://www.rabbitmq.com/devtools.html).
