@@ -1,4 +1,5 @@
 const bim360 = require('./bim360.js');
+const sqlite3 = require('sqlite3').verbose();
 
 //We use these to define what a tag should "look" like
 //Add/Edit/Remove as necessary
@@ -12,122 +13,187 @@ const regexes = [
 
 async function init(documentUrn){
     let bimToken = await bim360.authenticate();
-    //get list of files to download for the document
-    const docs = await bim360.getPropertyFiles(documentUrn, bimToken.access_token);
 
-    //download the files
-    const storageArr = await bim360.downloadPropertyFiles(docs, true, bimToken.access_token);
+    //If we decode the documentURN we can find out if it was uploaded to a 
+    //US or EU BIM360/ACC
+    let buffer = new Buffer(documentUrn, "base64");
+    let decoded = buffer.toString("ascii");
+    const region = (decoded.indexOf('emea') > -1 ? 'EU' : 'US');
+
+    //Get information about the derivative
+    const manifest = await bim360.getManifest(documentUrn, region, bimToken.access_token);
+
+    //Find the section with the property database details
+    const propertyDb = getDbFromManifest(manifest);
+    if(!propertyDb){
+      return;
+    }
+
+    //Retrieve the SQLite database
+    const propertyDbPath = await bim360.downloadDerivativeFile(documentUrn, propertyDb.urn, region, bimToken.access_token);
+    let db = new sqlite3.Database(propertyDbPath);
+
+    const tagImportList = await getTagsFromDatabase(db,regexes, "");
     
-    let tags = retrieveDocAttributes(storageArr);
-    console.log(tags);
+    
+    console.log(tagImportList);
 }
 
-function retrieveDocAttributes(storeArr){
-    const tagImportArray = [];
+/**
+   * Given a manifest response, get details of the property database
+   * @param {*} manifest 
+   * @returns 
+   */
+function getDbFromManifest(manifest){
+  for(const derivative of manifest.derivatives){
+      const propertyDb = derivative.children.find((child) => child.role == "Autodesk.CloudPlatform.PropertyDatabase");
+      return propertyDb;
+  }
+}
 
-    storeArr.forEach( (store) => { 
-        if (store == null || store.offs.length === 0){
-          return;
-        }
-    
-        const objectCount = store.offs.length - 1;
-    
-        // To eliminate lots of IF procesing, we define the function that handles the value assignment
-        let functionToAssignVal = null;
-   
-        //Use tag formats to identify tags
-        if (regexes) {
-          functionToAssignVal = (val) => {
-              let output = [];
-    
-              if(val) {
-                  for(let i = 0; i < regexes.length; i++){
-                    const tagFormat = regexes[i];
-                    //^ and $ to match the whole string
-                    try{
-                      if(tagFormat.length == 0){
-                        continue;
-                      }
-                      const match = val.match(new RegExp(`^(${tagFormat})$`, "g"));
-                      if (match != null) {
-                          output = match;
-                          break;
-                      }
-                    }
-                    catch(err){
-                      //Possibly caused by invalid regex format
-                      console.log(err);
-                    }
-                  }
-              }
-              return output; 
-          }
-        }
-  
-        for (var i = 0; i <= objectCount; i++) {
-          const tagList  = [];
-    
-          // Start offset of this object's properties in the Attribute-Values table
-          const propStart = 2 * store.offs[i];
-    
-          // End offset of this object's properties in the Attribute-Values table
-          const propEnd = 2 * store.offs[i + 1];
-    
-          // Loop over the attribute index - value index pairs for the objects
-          // and for each one look up the attribute and the value in their
-          // respective arrays.
-          for (let j = propStart; j < propEnd; j += 2) {
-    
-              const attrId = store.avs[j];
-              const valId = store.avs[j + 1];
-              
-              const attr = store.attrs[attrId];
-    
-              if (store.vals[valId]) {
-                
-                  let val = store.vals[valId].toString();
-                  let attrName = null;
-    
-                  if(attr[1]) {
-                      attrName = attr[5] ? `${attr[1]}.${attr[5]}` : `${attr[1]}.${attr[0]}`;
-                  } else {
-                      attrName = attr[5];
-                  }
-                
-                  let matches = [];
-  
-                  if(attrName){
-                    if(functionToAssignVal != null){
-                        matches = functionToAssignVal( val);
-                    }
-                  }
+/**
+   * Retrieve a list of a tags from a deriviative properties database
+   * @param {*} db Database to use
+   * @param {*} pimConfig Config information from PIM360 EIC
+   * @param {*} regexes List of regexes to find tags
+   * @returns 
+   */
+async function getTagsFromDatabase(db, regexes, tagAttributeField = null){
+  //Get all the drawing attributes from the table "_object_attr"
+  let allAttributes = await getAllAttributes(db);
+  let foundAttributes = [];
 
-                  // ignore the items that have only DBId and ExternalID
-                  if (matches && (matches.length > 0)) {
-                    matches.forEach((tagNo) => {
-                        if (tagNo) {
-                             if(!tagList.includes(tagNo)){
-                              tagList.push( tagNo );
-                             }
-                        }
-                    })
+  const matchingAttr = allAttributes.find((attr) => attr.name == tagAttributeField);
+  if(matchingAttr){
+    foundAttributes.push(matchingAttr);
+  }
+
+  //if no attributes have been provided, search across all
+  if(!tagAttributeField){
+    foundAttributes = allAttributes;
+  }
+
+  const eavs = await getAttributeEavs(db, foundAttributes);
+
+  const valueIds = eavs.map((eav) => eav.value);
+  const values = await getValues(db, valueIds);
+
+  let functionToAssignVal = null;
+  //Use tag formats to identify tags
+  if (regexes && regexes.length > 0) {
+    functionToAssignVal = (val) => {
+        let output = null;
+
+        if(val) {
+            for(const tagFormat of regexes){
+              try{
+                //^ and $ to match the whole string
+                const match = val.toString().match(new RegExp(`^(${tagFormat})$`, "g"));
+                if (match != null) {
+                    output = match;
+                    break;
                 }
               }
-          }
-          
-          if(tagList.length > 0) {
-            tagList.forEach( (tag) => {
-                // Add entry to tag import list
-                tagImportArray.push( {
-                  TagNumber: tag,
-                  DbId: i.toString()
-                } );
-            })
-          }
-        }  
-      });
-    return tagImportArray;
+              catch(err){
+                console.log(err);
+              }
+            }      
+        }
+        return output; 
+    }
+  }
+
+  const tagImportList = []
+
+  for(const val of values){
+
+    let match = null;
+    if(functionToAssignVal){
+      match = functionToAssignVal(val.value);
+    }
+    else{
+      match = val;
+    }
+
+    if(match == null){
+      continue;
+    }
+
+    //value matches regex
+    //find eav for this value
+    const matchingEav = eavs.find((eav) => eav.value == val.id);
+    
+    if(matchingEav == null){
+      continue;
+    }
+
+    tagImportList.push({
+      TagNumber: val.value,
+      DbId: matchingEav.entity
+    });
+  }
+
+  return tagImportList;
 }
 
-//Pass BIM360 Document URN here
+/**
+   * From the property database, get a list of all attributes
+   * @param {*} database SQLite3 Database
+   * @returns 
+   */
+async function getAllAttributes(database){
+  const getAllAttributesQuery = `SELECT id, (IIF(category IS NOT NULL AND category != "" , category || "." || name, name)) AS "attribute" FROM "_objects_attr"`;
+  return await queryPropertyDatabase(database, getAllAttributesQuery, (row) => ({ id: row.id, name: row.attribute }));
+}
+
+/**
+ * Querys the EAV (Entity, Attribute, Value) table in the database to get the EAVs that match the attribute Ids provided
+ * @param {*} database SQLite3 database
+ * @param {*} attributes array of attribute ids
+ * @returns 
+ */
+async function getAttributeEavs(database, attributes){
+  const attributeIds = attributes.map((attr) => attr.id);
+  const attributeIdString = attributeIds.join(",");
+  const attributeEavQuery = `SELECT * FROM _objects_eav where attribute_id IN (${attributeIdString})`;
+
+  return await queryPropertyDatabase(database, attributeEavQuery, (row) => ({
+    entity: row.entity_id,
+    attribute: row.attribute_id,
+    value: row.value_id,
+  }))
+}
+
+/**
+ * Query the database for values that have the id provided
+ * @param {*} database SQLite3 database  
+ * @param {*} valueIds array of value ids
+ * @returns 
+ */
+async function getValues(database, valueIds){
+  const valueIdString = valueIds.join(",");
+  const valueQuery = `SELECT * FROM _objects_val WHERE id IN (${valueIdString})`;
+
+  return await queryPropertyDatabase(database, valueQuery, (row) => ({ id: row.id, value: row.value }))
+}
+
+
+async function queryPropertyDatabase(database, sqlQuery, mapFunction) {
+  return new Promise((resolve, reject) => {
+      const results = [];
+      database.each(sqlQuery, (err, row) => {
+        if (!err) {
+          results.push(mapFunction(row));
+        }
+      }, (err, complete) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+  });
+}
+
+//Pass BIM360/ACC Document URN here
 init("");
